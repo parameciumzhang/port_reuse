@@ -1,0 +1,33 @@
+name: Build Port Reuse EXE
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  # 允许你手动在网页上点击触发编译
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Compile port_reuse_windows.go
+    runs-on: windows-latest  # 使用 Windows 环境
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.20' # 建议根据原项目要求修改版本
+
+    - name: Build specific file
+      run: go build -o port_reuse.exe port_reuse_windows.go
+      # 解释：-o 指定生成的 exe 名字，后面跟上你要编译的 go 文件名
+
+    - name: Upload EXE
+      uses: actions/upload-artifact@v4
+      with:
+        name: port-reuse-executable
+        path: port_reuse.exe
